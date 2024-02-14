@@ -1,5 +1,5 @@
 """
-Serializers for Recipe APIS
+Serializers for Worker APIS
 """
 from rest_framework import serializers
 
@@ -15,11 +15,30 @@ class companySerializer(serializers.ModelSerializer):
     class Meta:
         model = companies
         fields = ['codeValue', 'name', 'description', 'owner']
+        partial = True  # Added this line to allow partial updates
+    
+    def to_internal_value(self, data):
+        if isinstance(data, dict):
+            # Check if a company with the same codeValue already exists
+            code_value = data.get('codeValue')
+            # if code_value is not None
+            if code_value:
+                # Query the database for an existing company with the same codeValue
+                existing_company = companies.objects.filter(codeValue=code_value).first()
+                # If an existing company is found, return that instance
+                if existing_company:
+                    # If an existing company is found, return that instance
+                    return existing_company
+                else:
+                    # If company data is not valid, you can choose to ignore it or raise an error
+                    # For now, we are just printing a message and continuing without a company
+                    print("Invalid company data:", company_serializer.errors)
+        # If no existing company is found, fall back to the default behavior
+        return super().to_internal_value(data)
 
 class WorkerSerializer(serializers.ModelSerializer):
-    """Serializer for recipes."""
     company = companySerializer(many=False, required=True)
-    
+
     class Meta:
         model = Workers
         fields = [
@@ -31,30 +50,48 @@ class WorkerSerializer(serializers.ModelSerializer):
             'company',
         ]
 
-    def _get_or_create_company(self, company, Worker):
-        """Handle getting or creating Companys as needed."""
-        print(company, Worker)
-        company_obj, created = companies.objects.get_or_create(
-            **company,
-        )
-        print(company_obj, created)
-        Worker.company.add(company_obj)
+    def _get_or_create_company(self, company_data, worker_instance):
+        company_serializer = companySerializer(worker_instance.company, data=company_data)
+        if company_serializer.is_valid():
+            return companies.objects.get_or_create(**company_serializer.validated_data)[0]
+        else:
+            raise serializers.ValidationError("Invalid company data")
 
     def create(self, validated_data):
-        """Create a recipe."""
-        company = validated_data.pop('company', [])
-        Worker = Workers.objects.create(**validated_data)
-        self._get_or_create_company(company, Worker)
+        company_data = validated_data.pop('company', None)
+        if company_data:
+            # If company_data is an instance of companies, use it directly
+            if isinstance(company_data, companies):
+                company_obj = company_data
+            else:
+                company_serializer = companySerializer(data=company_data)
+                if company_serializer.is_valid():
+                    company_obj, created = companies.objects.get_or_create(**company_serializer.validated_data)
+                else:
+                    raise serializers.ValidationError("Invalid company data")
+            validated_data['company'] = company_obj
+        else:
+            raise serializers.ValidationError("Company data is required.")
 
-        return Worker
+        return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        """Update recipe."""
-        company = validated_data.pop('company', [])
-        print(company)
-        if company is not None:
-            instance.company.clear()
-            self._get_or_create_company(company, instance)
+        company_data = validated_data.pop('company', None)
+
+        if company_data:
+            # If company_data is an instance of companies, use it directly
+            if isinstance(company_data, companies):
+                instance.company = company_data
+            else:
+                # Update or create the Company instance
+                company_serializer = companySerializer(instance.company, data=company_data)
+                if company_serializer.is_valid():
+                    # Get or create the Company instance
+                    company_obj, created = companies.objects.get_or_create(**company_serializer.validated_data)
+                    instance.company = company_obj
+                else:
+                    # Handle the case when company data is not valid
+                    raise serializers.ValidationError("Invalid company data")
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -64,7 +101,5 @@ class WorkerSerializer(serializers.ModelSerializer):
 
 
 class WorkerDetailSerializer(WorkerSerializer):
-    """Serializer for recipe detail view."""
-
     class Meta(WorkerSerializer.Meta):
         fields = WorkerSerializer.Meta.fields + ['firstName', 'lastName']

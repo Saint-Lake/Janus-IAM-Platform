@@ -74,8 +74,6 @@ class Workers(models.Model):
     company = models.ForeignKey(
         companies,
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
     )
 
     def __str__(self):
