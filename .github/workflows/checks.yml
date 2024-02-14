@@ -1,0 +1,12 @@
+---
+name: checks
+
+on: [push]
+
+jobs:
+  test-lint:
+    name: Test and Lint
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Lint
+        run: docker-compose run --rm app sh -c "flake8"
