@@ -29,10 +29,6 @@ class companySerializer(serializers.ModelSerializer):
                 if existing_company:
                     # If an existing company is found, return that instance
                     return existing_company
-                else:
-                    # If company data is not valid, you can choose to ignore it or raise an error
-                    # For now, we are just printing a message and continuing without a company
-                    print("Invalid company data:", company_serializer.errors)
         # If no existing company is found, fall back to the default behavior
         return super().to_internal_value(data)
 
