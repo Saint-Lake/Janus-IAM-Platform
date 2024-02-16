@@ -13,7 +13,6 @@ from Workers import views
 
 router = DefaultRouter()
 router.register('workers', views.WorkerViewSet)
-router.register('companies', views.CompanyViewSet)
 
 app_name = 'Workers'
 

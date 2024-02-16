@@ -12,14 +12,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import (
-    Workers,
-    companies
+    Workers
 )
 from Workers import serializers
 
 
 class WorkerViewSet(viewsets.ModelViewSet):
-    """View for manage recipe APIs."""
+    """Viewset for Workers APIs."""
     serializer_class = serializers.WorkerDetailSerializer
     queryset = Workers.objects.all()
     authentication_classes = [TokenAuthentication]
@@ -41,20 +40,3 @@ class WorkerViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new recipe"""
         serializer.save()
-
-class BaseCodeListAttrViewSet(
-    mixins.DestroyModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
-):
-    """Base viewset for recipe attributes."""
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-
-class CompanyViewSet(BaseCodeListAttrViewSet):
-    """Manage tags in the database."""
-    serializer_class = serializers.companySerializer
-    queryset = companies.objects.all()

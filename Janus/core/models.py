@@ -13,12 +13,42 @@ from django.contrib.auth.models import (
 )
 
 
-class companies(models.Model):
-    """Company codelist Model"""
+class CommonCodeListFields(models.Model):
+    """Common codelist Model"""
     codeValue = models.CharField(max_length=55, primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     owner = models.CharField(max_length=255)
+
+
+class companies(CommonCodeListFields):
+    """Company codelist Model"""
+    pass
+
+
+class businessUnits(CommonCodeListFields):
+    """BU codelist Model"""
+    pass
+
+
+class departments(CommonCodeListFields):
+    """Departments codelist Model"""
+    pass
+
+
+class locations(CommonCodeListFields):
+    """locations codelist Model"""
+    pass
+
+
+class costCenters(CommonCodeListFields):
+    """Cost Centers codelist Model"""
+    pass
+
+
+class titles(CommonCodeListFields):
+    """Jobs codelist Model"""
+    pass
     
 
 class Workers(models.Model):
@@ -39,6 +69,34 @@ class Workers(models.Model):
     company = models.ForeignKey(
         companies,
         on_delete=models.CASCADE,
+    )
+    businessUnit = models.ForeignKey(
+        businessUnits,
+        on_delete=models.CASCADE,
+    )
+    department = models.ForeignKey(
+        departments,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    location = models.ForeignKey(
+        locations,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    costCenter = models.ForeignKey(
+        costCenters,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    title = models.ForeignKey(
+        titles,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
