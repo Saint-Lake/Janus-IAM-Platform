@@ -4,13 +4,13 @@ Serializers for Worker APIS
 from rest_framework import serializers
 
 from core.models import (
-    Workers,
-    companies,
-    businessUnits,
-    departments,
-    locations,
-    costCenters,
-    titles,
+    Worker,
+    company,
+    businessUnit,
+    department,
+    location,
+    costCenter,
+    title,
 )
 
 
@@ -42,7 +42,7 @@ class workercompanySerializer(CommonCodeListFieldsSerializer):
     """Serializer for Company."""
 
     class Meta:
-        model = companies
+        model = company
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
@@ -51,7 +51,7 @@ class workerbusinessUnitSerializer(CommonCodeListFieldsSerializer):
     """Serializer for Business Unit."""
 
     class Meta:
-        model = businessUnits
+        model = businessUnit
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
@@ -60,7 +60,7 @@ class workerdepartmentSerializer(CommonCodeListFieldsSerializer):
     """Serializer for Business Unit."""
 
     class Meta:
-        model = departments
+        model = department
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
@@ -69,7 +69,7 @@ class workerlocationSerializer(CommonCodeListFieldsSerializer):
     """Serializer for Business Unit."""
 
     class Meta:
-        model = locations
+        model = location
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
@@ -78,7 +78,7 @@ class workercostCenterSerializer(CommonCodeListFieldsSerializer):
     """Serializer for Business Unit."""
 
     class Meta:
-        model = costCenters
+        model = costCenter
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
@@ -87,14 +87,14 @@ class workertitleSerializer(CommonCodeListFieldsSerializer):
     """Serializer for Business Unit."""
 
     class Meta:
-        model = titles
+        model = title
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
 
 class WorkerSerializer(serializers.ModelSerializer):
     """Serializer for Worker"""
-    
+
     company = workercompanySerializer(many=False, required=True)
     businessUnit = workerbusinessUnitSerializer(many=False, required=True)
     department = workerdepartmentSerializer(many=False, required=True)
@@ -103,13 +103,15 @@ class WorkerSerializer(serializers.ModelSerializer):
     title = workertitleSerializer(many=False, required=True)
 
     class Meta:
-        model = Workers
+        model = Worker
         fields = [
             'associateOID',
             'WorkerId',
             'workerStatus',
             'prefered_name',
             'prefered_lastName',
+            'startDate',
+            'TermDate',
             'company',
             'businessUnit',
             'department',
@@ -137,7 +139,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if company_data:
             # Check if company_data is an instance of the model
-            if isinstance(company_data, companies):
+            if isinstance(company_data, company):
                 # if so this instance = the data we need
                 validated_data['company'] = company_data
             else:
@@ -146,7 +148,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if business_unit_data:
             # Check if business_unit_data is an instance of the model
-            if isinstance(business_unit_data, businessUnits):
+            if isinstance(business_unit_data, businessUnit):
                 # if so this instance = the data we need
                 validated_data['businessUnit'] = business_unit_data
             else:
@@ -155,7 +157,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if department_data:
             # Check if department_data is an instance of the model
-            if isinstance(department_data, departments):
+            if isinstance(department_data, department):
                 # if so this instance = the data we need
                 validated_data['department'] = department_data
             else:
@@ -164,7 +166,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if location_data:
             # Check if location_data is an instance of the model
-            if isinstance(location_data, locations):
+            if isinstance(location_data, location):
                 # if so this instance = the data we need
                 validated_data['location'] = location_data
             else:
@@ -173,7 +175,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if costCenter_data:
             # Check if costCenter_data is an instance of the model
-            if isinstance(costCenter_data, costCenters):
+            if isinstance(costCenter_data, costCenter):
                 # if so this instance = the data we need
                 validated_data['costCenter'] = costCenter_data
             else:
@@ -182,7 +184,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if title_data:
             # Check if title_data is an instance of the model
-            if isinstance(title_data, titles):
+            if isinstance(title_data, title):
                 # if so this instance = the data we need
                 validated_data['title'] = title_data
             else:
@@ -202,7 +204,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if company_data:
             # Check if company_data is an instance of the model
-            if isinstance(company_data, companies):
+            if isinstance(company_data, company):
                 # if so this instance = the data we need
                 instance.company = company_data
             else:
@@ -213,7 +215,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if business_unit_data:
             # Check if business_unit_data is an instance of the model
-            if isinstance(business_unit_data, businessUnits):
+            if isinstance(business_unit_data, businessUnit):
                 # if so this instance = the data we need
                 instance.businessUnit = business_unit_data
             else:
@@ -224,7 +226,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if department_data:
             # Check if department_data is an instance of the model
-            if isinstance(department_data, departments):
+            if isinstance(department_data, department):
                 # if so this instance = the data we need
                 instance.department = department_data
             else:
@@ -235,7 +237,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if location_data:
             # Check if location_data is an instance of the model
-            if isinstance(location_data, locations):
+            if isinstance(location_data, location):
                 # if so this instance = the data we need
                 instance.location = location_data
             else:
@@ -246,7 +248,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if costCenter_data:
             # Check if costCenter_data is an instance of the model
-            if isinstance(costCenter_data, costCenters):
+            if isinstance(costCenter_data, costCenter):
                 # if so this instance = the data we need
                 instance.costCenter = costCenter_data
             else:
@@ -257,7 +259,7 @@ class WorkerSerializer(serializers.ModelSerializer):
 
         if title_data:
             # Check if title_data is an instance of the model
-            if isinstance(title_data, titles):
+            if isinstance(title_data, title):
                 # if so this instance = the data we need
                 instance.title = title_data
             else:

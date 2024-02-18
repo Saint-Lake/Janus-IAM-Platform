@@ -21,37 +21,37 @@ class CommonCodeListFields(models.Model):
     owner = models.CharField(max_length=255)
 
 
-class companies(CommonCodeListFields):
+class company(CommonCodeListFields):
     """Company codelist Model"""
     pass
 
 
-class businessUnits(CommonCodeListFields):
+class businessUnit(CommonCodeListFields):
     """BU codelist Model"""
     pass
 
 
-class departments(CommonCodeListFields):
+class department(CommonCodeListFields):
     """Departments codelist Model"""
     pass
 
 
-class locations(CommonCodeListFields):
+class location(CommonCodeListFields):
     """locations codelist Model"""
     pass
 
 
-class costCenters(CommonCodeListFields):
+class costCenter(CommonCodeListFields):
     """Cost Centers codelist Model"""
     pass
 
 
-class titles(CommonCodeListFields):
+class title(CommonCodeListFields):
     """Jobs codelist Model"""
     pass
     
 
-class Workers(models.Model):
+class Worker(models.Model):
     associateOID = models.CharField(max_length=55)
     WorkerId = models.CharField(max_length=55, primary_key=True)
     workerStatus = models.CharField(
@@ -66,34 +66,36 @@ class Workers(models.Model):
     prefered_lastName = models.CharField(max_length=55)
     firstName = models.CharField(max_length=55)
     lastName = models.CharField(max_length=55)
+    startDate = models.DateTimeField(null=True)
+    TermDate = models.DateTimeField(null=True, blank=True)
     company = models.ForeignKey(
-        companies,
+        company,
         on_delete=models.CASCADE,
     )
     businessUnit = models.ForeignKey(
-        businessUnits,
+        businessUnit,
         on_delete=models.CASCADE,
     )
     department = models.ForeignKey(
-        departments,
+        department,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     location = models.ForeignKey(
-        locations,
+        location,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     costCenter = models.ForeignKey(
-        costCenters,
+        costCenter,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     title = models.ForeignKey(
-        titles,
+        title,
         on_delete=models.CASCADE,
         blank=True,
         null=True,

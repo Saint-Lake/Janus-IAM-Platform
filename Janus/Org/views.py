@@ -12,12 +12,12 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import (
-    companies,
-    businessUnits,
-    departments,
-    locations,
-    costCenters,
-    titles,
+    company,
+    businessUnit,
+    department,
+    location,
+    costCenter,
+    title,
 )
 from Org import serializers
 
@@ -37,34 +37,34 @@ class BaseCodeListAttrViewSet(
 class CompanyViewSet(BaseCodeListAttrViewSet):
     """Manage Companies in the database."""
     serializer_class = serializers.companySerializer
-    queryset = companies.objects.all()
+    queryset = company.objects.all()
 
 
 class BusinessUnitViewSet(BaseCodeListAttrViewSet):
     """Manage Business Units in the database."""
     serializer_class = serializers.businessUnitSerializer
-    queryset = businessUnits.objects.all()
+    queryset = businessUnit.objects.all()
 
 
 class DeparmentViewSet(BaseCodeListAttrViewSet):
     """Manage Departments in the database."""
     serializer_class = serializers.departmentSerializer
-    queryset = departments.objects.all()
+    queryset = department.objects.all()
 
 
 class LocationViewSet(BaseCodeListAttrViewSet):
     """Manage Locations in the database."""
     serializer_class = serializers.locationSerializer
-    queryset = locations.objects.all()
+    queryset = location.objects.all()
 
 
 class CostCenterViewSet(BaseCodeListAttrViewSet):
     """Manage Cost Centers in the database."""
     serializer_class = serializers.costCenterSerializer
-    queryset = costCenters.objects.all()
+    queryset = costCenter.objects.all()
 
 
 class TitleViewSet(BaseCodeListAttrViewSet):
     """Manage Titles in the database."""
     serializer_class = serializers.titleSerializer
-    queryset = titles.objects.all()
+    queryset = title.objects.all()

@@ -9,5 +9,10 @@ from core import models
 
 
 
-admin.site.register(models.Workers)
-admin.site.register(models.companies)
+admin.site.register(models.Worker)
+admin.site.register(models.company)
+admin.site.register(models.businessUnit)
+admin.site.register(models.department)
+admin.site.register(models.location)
+admin.site.register(models.costCenter)
+admin.site.register(models.title)

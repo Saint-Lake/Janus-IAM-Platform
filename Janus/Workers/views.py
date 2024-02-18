@@ -12,7 +12,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import (
-    Workers
+    Worker
 )
 from Workers import serializers
 
@@ -20,7 +20,7 @@ from Workers import serializers
 class WorkerViewSet(viewsets.ModelViewSet):
     """Viewset for Workers APIs."""
     serializer_class = serializers.WorkerDetailSerializer
-    queryset = Workers.objects.all()
+    queryset = Worker.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
