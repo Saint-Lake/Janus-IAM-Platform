@@ -29,17 +29,22 @@ class LifeCycleEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = lifeCycleEvent
-        fields = ['life_event_id', 'event_status', 'event_type', 'start_date', 'migration_window', 'end_date']
-        read_only_fields = ['life_event_id', 'end_date']
+        fields = '__all__'
 
 class LifeCycleCaseSerializer(serializers.ModelSerializer):
     Worker = RelatedWorkerSerializer(required=True)
-    Event = LifeCycleEventSerializer(many=True, required=False)
+    related_events = serializers.SerializerMethodField()
 
     class Meta:
         model = lifeCycleCase
-        fields = ['life_cycle_id', 'case_status', 'Worker', 'Event']
-        read_only_fields = ['life_cycle_id']
+        fields = ['life_cycle_id', 'case_status', 'Worker', 'related_events']
+        read_only_fields = ['life_cycle_id','related_events']
+
+    def get_related_events(self, instance):
+        # Assuming the related_name for the ForeignKey in lifeCycleEvent is 'case'
+        events = lifeCycleEvent.objects.filter(case_id=instance)
+        serialized_events = LifeCycleEventSerializer(events, many=True).data
+        return serialized_events
 
     def create(self, validated_data):
         worker_data = validated_data.pop('Worker', {})
@@ -79,20 +84,6 @@ class LifeCycleCaseSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({"Worker": ["Worker with the specified WorkerId does not exist."]})
 
             instance.Worker = worker_instance
-
-        # Update or create the related 'Event' instances if provided in the request
-        events_data = validated_data.get('Event', [])
-        for event_data in events_data:
-            event_id = event_data.get('life_event_id', None)
-            if event_id:
-                # If event_id is present, update the existing event
-                event_instance = lifeCycleEvent.objects.get(pk=event_id, lifeCycleCase=instance)
-                for key, value in event_data.items():
-                    setattr(event_instance, key, value)
-                event_instance.save()
-            else:
-                # If event_id is not present, create a new event
-                lifeCycleEvent.objects.create(lifeCycleCase=instance, **event_data)
 
         return instance
 

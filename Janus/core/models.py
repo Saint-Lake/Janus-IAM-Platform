@@ -4,6 +4,8 @@ Database models.
 import uuid
 import os
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
@@ -104,6 +106,43 @@ class Worker(models.Model):
     def __str__(self):
         return self.WorkerId
 
+
+class lifeCycleCase(models.Model):
+    # Custom primary key CharField
+    life_cycle_id = models.CharField(max_length=10, primary_key=True, editable=False)
+    case_status = models.CharField(
+        max_length=15,
+        choices = (
+            ("Onboarding","Onboarding"),
+            ("Hired","Hired"),
+            ("Moving","Moving"),
+            ("Leaving","Leaving"),
+            ("Rehiring","Rehiring"),
+            ("Archived","Archived"),
+        )
+    )
+    Worker = models.ForeignKey(
+        Worker,
+        on_delete=models.CASCADE,
+    )
+
+    def save(self, *args, **kwargs):
+        # Generate and set the primary key before saving
+        if not self.life_cycle_id:
+            last_id = lifeCycleCase.objects.order_by('-life_cycle_id').first()
+            if last_id:
+                last_number = int(last_id.life_cycle_id.split('-')[1])
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.life_cycle_id = f'LIFE-{new_number:05d}'
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.life_cycle_id
+
+
 class lifeCycleEvent(models.Model):
     life_event_id = models.CharField(max_length=11, primary_key=True, editable=False)
     event_status = models.CharField(
@@ -125,58 +164,26 @@ class lifeCycleEvent(models.Model):
     start_date = models.DateTimeField()
     migration_window = models.IntegerField()
     end_date = models.DateTimeField(editable=False)
+    case_id = models.ForeignKey(
+        lifeCycleCase,
+        on_delete=models.CASCADE,
+    )
 
 
     def save(self, *args, **kwargs):
         # Generate and set the primary key before saving
-        if not self.life_cycle_id:
-            last_id = lifeCycleEvent.objects.order_by('-life_cycle_id').first()
+        if not self.life_event_id:
+            last_id = lifeCycleEvent.objects.order_by('-life_event_id').first()
             if last_id:
-                last_number = int(last_id.life_cycle_id.split('-')[1])
+                last_number = int(last_id.life_event_id.split('-')[1])
                 new_number = last_number + 1
             else:
                 new_number = 1
-            self.life_cycle_id = f'EVENT-{new_number:05d}'
+            self.life_event_id = f'EVENT-{new_number:05d}'
 
             # Calculate end date based on start date and migration window
         if not self.end_date:
             self.end_date = self.start_date + timedelta(days=self.migration_window)
-
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.life_cycle_id
-
-class lifeCycleCase(models.Model):
-    # Custom primary key CharField
-    life_cycle_id = models.CharField(max_length=10, primary_key=True, editable=False)
-    case_status = models.CharField(
-        max_length=15,
-        choices = (
-            ("Onboarding","Onboarding"),
-            ("Hired","Hired"),
-            ("Moving","Moving"),
-            ("Leaving","Leaving"),
-            ("Rehiring","Rehiring"),
-            ("Archived","Archived"),
-        )
-    )
-    Worker = models.ForeignKey(
-        Worker,
-        on_delete=models.CASCADE,
-    )
-    Event = models.ManyToManyField(lifeCycleEvent, blank=True)
-
-    def save(self, *args, **kwargs):
-        # Generate and set the primary key before saving
-        if not self.life_cycle_id:
-            last_id = lifeCycleCase.objects.order_by('-life_cycle_id').first()
-            if last_id:
-                last_number = int(last_id.life_cycle_id.split('-')[1])
-                new_number = last_number + 1
-            else:
-                new_number = 1
-            self.life_cycle_id = f'LIFE-{new_number:05d}'
 
         super().save(*args, **kwargs)
 
