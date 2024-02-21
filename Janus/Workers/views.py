@@ -38,5 +38,5 @@ class WorkerViewSet(viewsets.ModelViewSet):
         return self.serializer_class
 
     def perform_create(self, serializer):
-        """Create a new recipe"""
+        """Create a new Worker"""
         serializer.save()

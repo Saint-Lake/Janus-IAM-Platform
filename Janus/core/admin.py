@@ -10,6 +10,8 @@ from core import models
 
 
 admin.site.register(models.Worker)
+admin.site.register(models.lifeCycleEvent)
+admin.site.register(models.lifeCycleCase)
 admin.site.register(models.company)
 admin.site.register(models.businessUnit)
 admin.site.register(models.department)

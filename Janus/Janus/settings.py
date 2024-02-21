@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'Org',
     'Workers',
+    'LifeCycle',
 ]
 
 MIDDLEWARE = [
