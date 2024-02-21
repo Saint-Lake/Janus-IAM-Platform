@@ -11,6 +11,7 @@ from core.models import (
     location,
     costCenter,
     title,
+    lifeCycleCase,
 )
 
 
@@ -91,6 +92,11 @@ class workertitleSerializer(CommonCodeListFieldsSerializer):
         fields = CommonCodeListFieldsSerializer.Meta.fields
         partial = True  # Added this line to allow partial updates
 
+class LifeCycleCaseSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = lifeCycleCase
+        fields = '__all__'
 
 class WorkerSerializer(serializers.ModelSerializer):
     """Serializer for Worker"""
@@ -101,6 +107,7 @@ class WorkerSerializer(serializers.ModelSerializer):
     location = workerlocationSerializer(many=False, required=True)
     costCenter = workercostCenterSerializer(many=False, required=True)
     title = workertitleSerializer(many=False, required=True)
+    related_cases = serializers.SerializerMethodField()
 
     class Meta:
         model = Worker
@@ -118,7 +125,14 @@ class WorkerSerializer(serializers.ModelSerializer):
             'location',
             'costCenter',
             'title',
+            'related_cases',
         ]
+
+    def get_related_cases(self, instance):
+        # Assuming the related_name for the ForeignKey in lifeCycleCase is 'Worker'
+        cases = lifeCycleCase.objects.filter(Worker=instance)
+        serialized_cases = LifeCycleCaseSerializer(cases, many=True).data
+        return serialized_cases
 
     def _get_or_create_common_code_list(self, serializer_class, instance, data):
         # Helper method to get or create instances of CommonCodeListFields models
