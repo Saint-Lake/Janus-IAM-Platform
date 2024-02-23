@@ -121,7 +121,7 @@ class lifeCycleCase(models.Model):
             ("Archived","Archived"),
         )
     )
-    Worker = models.ForeignKey(
+    Worker = models.OneToOneField(
         Worker,
         on_delete=models.CASCADE,
     )

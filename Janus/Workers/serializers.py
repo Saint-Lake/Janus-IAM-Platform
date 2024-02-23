@@ -93,7 +93,7 @@ class workertitleSerializer(CommonCodeListFieldsSerializer):
         partial = True  # Added this line to allow partial updates
 
 class LifeCycleCaseSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = lifeCycleCase
         fields = '__all__'
